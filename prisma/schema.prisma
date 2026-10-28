@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Person {
+  id           String   @id @default(cuid())
+  name         String
+  relationship String?
+  photoPath    String?
+  createdAt    DateTime @default(now())
+  memories     Memory[]
+}
+
+model Memory {
+  id         String   @id @default(cuid())
+  personId   String
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  transcript String
+  summary    String?
+  tags       String   @default("[]")  // JSON array
+  quotes     String   @default("[]")  // JSON array of exact quotes
+  foods      String   @default("[]")
+  songs      String   @default("[]")
+  places     String   @default("[]")
+  audioPath  String?
+  createdAt  DateTime @default(now())
+
+  @@index([personId])
+}
+
