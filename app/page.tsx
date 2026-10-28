@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { Button } from "@/components/button";
 import { Candle } from "@/components/candle";
 import { Garland } from "@/components/garland";
+import ServiceStatus from "@/components/service-status";
 
 const focusRing =
   "outline-none focus-visible:ring-2 focus-visible:ring-marigold focus-visible:ring-offset-2 focus-visible:ring-offset-ink";
@@ -163,7 +164,7 @@ async function HomeContent({ searchParams }: { searchParams: Promise<HomeSearchP
         <h2 id="how-heading" className="font-display text-[36px] leading-tight">
           How it works
         </h2>
-        <div className="mt-6 grid gap-5 md:grid-cols-3">
+        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {STEPS.map((step, index) => (
             <article key={step.title} className="rounded-3xl border border-line bg-surface p-7">
               <span className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-marigold font-display text-2xl font-semibold text-ink">
@@ -203,7 +204,7 @@ async function HomeContent({ searchParams }: { searchParams: Promise<HomeSearchP
             No one matches that search.{" "}
             <Link
               href="/"
-              className={`font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
+              className={`inline-flex min-h-11 items-center font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
             >
               Clear search
             </Link>
@@ -298,6 +299,7 @@ export default function Home({ searchParams }: { searchParams: Promise<HomeSearc
   return (
     <main className="pb-20">
       <div className="mx-auto w-full max-w-[1200px] px-[clamp(20px,4vw,48px)]">
+        <ServiceStatus />
         <Suspense fallback={<p className="py-20 text-center text-muted">Loading…</p>}>
           <HomeContent searchParams={searchParams} />
         </Suspense>

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImagePlus, Trash2 } from "lucide-react";
 import { Button } from "@/components/button";
+import { readableError } from "@/lib/errors";
 
 const IMAGE_EXT = /\.(jpe?g|png|webp|gif|avif)$/i;
 const MAX_PHOTO_MB = 10;
@@ -39,10 +40,14 @@ export default function PhotoUploadButton({
       fd.append("photo", file);
       const res = await fetch("/api/photo", { method: "POST", body: fd });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error ?? "Couldn't save that photo.");
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" && data.error ? data.error : "Couldn't save that photo.",
+        );
+      }
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't save that photo.");
+      setError(readableError(err, "Couldn't save that photo. Please try again."));
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -57,7 +62,7 @@ export default function PhotoUploadButton({
       if (!res.ok) throw new Error("Couldn't remove that photo.");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't remove that photo.");
+      setError(readableError(err, "Couldn't remove that photo. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -94,6 +99,8 @@ export default function PhotoUploadButton({
         ref={inputRef}
         type="file"
         accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.avif"
+        aria-label="Choose a photo"
+        tabIndex={-1}
         className="sr-only"
         onChange={(e) => upload(e.target.files?.[0])}
       />

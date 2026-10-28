@@ -1,3 +1,6 @@
+# PyAV is pinned to the version verified on this machine. Newer PyAV releases
+# changed av.open() in ways that break faster-whisper's audio decoding.
+av==14.4.0
 faster-whisper
 fastapi
 uvicorn

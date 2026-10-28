@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/button";
+import { readableError } from "@/lib/errors";
 
 type ListName = "tags" | "foods" | "songs" | "places" | "quotes";
 type Lists = Record<ListName, string[]>;
@@ -26,7 +27,7 @@ function RemoveButton({
       aria-label={label}
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex h-11 w-9 shrink-0 items-center justify-center rounded-full text-muted transition hover:bg-surface2 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marigold focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-40"
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition hover:bg-surface2 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marigold focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-40"
     >
       <X aria-hidden="true" className="h-3.5 w-3.5" />
     </button>
@@ -110,13 +111,17 @@ export default function ReviewPanel({
         body: JSON.stringify({ list, value }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
-      if (!res.ok) throw new Error(data.error ?? "Couldn't remove that item.");
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" && data.error ? data.error : "Couldn't remove that item.",
+        );
+      }
       setLists((current) => ({
         ...current,
         [list]: current[list].filter((item) => item !== value),
       }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't remove that item.");
+      setError(readableError(err, "Couldn't remove that item. Please try again."));
     } finally {
       setRemoving(null);
     }
@@ -134,7 +139,7 @@ export default function ReviewPanel({
 
       <div className="mt-6">
         <h3 className="font-semibold">Summary</h3>
-        <p className="mt-2 rounded-2xl border border-line bg-ink p-4 leading-relaxed">
+        <p className="mt-2 break-words rounded-2xl border border-line bg-ink p-4 leading-relaxed">
           {summary?.trim() || "No summary yet."}
         </p>
       </div>
@@ -195,7 +200,7 @@ export default function ReviewPanel({
             {lists.quotes.map((quote) => (
               <figure key={quote} className="rounded-[18px] border border-line bg-ink p-5">
                 <div className="flex items-start justify-between gap-2">
-                  <blockquote className="font-display text-[22px] italic leading-snug">
+                  <blockquote className="min-w-0 break-words font-display text-[22px] italic leading-snug">
                     &ldquo;{quote}&rdquo;
                   </blockquote>
                   <RemoveButton
@@ -233,7 +238,7 @@ export default function ReviewPanel({
       </Button>
       <Link
         href={`/memory/${memoryId}/edit`}
-        className={`mt-4 block text-center font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
+        className={`mt-4 inline-flex min-h-11 w-full items-center justify-center text-center font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
       >
         Back to transcript
       </Link>

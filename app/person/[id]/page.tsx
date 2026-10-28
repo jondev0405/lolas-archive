@@ -188,7 +188,7 @@ async function Ofrenda({
   return (
     <>
       <div id="ofrenda-export">
-        <section className="relative pb-8 pt-14 text-center">
+        <section className="relative overflow-x-clip pb-8 pt-14 text-center">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute left-1/2 top-0 h-[560px] w-[min(1000px,100%)] -translate-x-1/2 print:hidden"
@@ -235,7 +235,7 @@ async function Ofrenda({
             <Garland width="min(360px, 80%)" />
           </div>
 
-          <h1 className="mt-7 font-display text-[clamp(48px,8vw,88px)] leading-[1.05]">
+          <h1 className="mt-7 max-w-full break-words font-display text-[clamp(48px,8vw,88px)] leading-[1.05]">
             {person.name}
           </h1>
 
@@ -362,16 +362,16 @@ async function Ofrenda({
                 className="flex min-w-[min(480px,100%)] flex-1 basis-[480px] flex-col gap-6 rounded-3xl border border-line bg-surface p-6 break-inside-avoid sm:p-8"
               >
                 {memory.summary ? (
-                  <h3 className="font-display text-[28px] leading-tight">{memory.summary}</h3>
+                  <h3 className="break-words font-display text-[28px] leading-tight">{memory.summary}</h3>
                 ) : (
                   <div>
-                    <p className="leading-relaxed text-muted">
+                    <p className="break-words leading-relaxed text-muted">
                       {memory.transcript.slice(0, 140)}
                       {memory.transcript.length > 140 ? "…" : ""}
                     </p>
                     <Link
                       href={`/memory/${memory.id}/edit`}
-                      className={`mt-3 inline-block font-semibold text-marigold underline underline-offset-4 print:hidden ${focusRing}`}
+                      className={`mt-3 inline-flex min-h-11 items-center font-semibold text-marigold underline underline-offset-4 print:hidden ${focusRing}`}
                       data-export-hide="true"
                     >
                       Gather memories
@@ -389,7 +389,7 @@ async function Ofrenda({
                         >
                           &ldquo;
                         </span>
-                        <blockquote className="mt-3 font-display text-[clamp(24px,4.5vw,30px)] italic leading-snug">
+                        <blockquote className="mt-3 break-words font-display text-[clamp(24px,4.5vw,30px)] italic leading-snug">
                           {quote}
                         </blockquote>
                         <figcaption className="mt-4 flex items-center gap-2 text-sm text-muted">
@@ -405,6 +405,7 @@ async function Ofrenda({
                   <div className="print:hidden" data-export-hide="true">
                     <audio
                       controls
+                      aria-label="Original voice recording"
                       src={`/api/audio/${memory.id}`}
                       className="w-full"
                       style={{ accentColor: "#F4A62A" }}
@@ -424,17 +425,17 @@ async function Ofrenda({
 
                 <details className="mt-auto print:hidden" data-export-hide="true">
                   <summary
-                    className={`w-fit cursor-pointer text-sm font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
+                    className={`inline-flex min-h-11 w-fit cursor-pointer items-center text-sm font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
                   >
                     Read the full transcript
                   </summary>
                   <div className="mt-4 space-y-4">
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted">
+                    <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-muted">
                       {memory.transcript}
                     </p>
                     <Link
                       href={`/memory/${memory.id}/edit`}
-                      className={`inline-block text-sm font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
+                      className={`inline-flex min-h-11 items-center text-sm font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
                     >
                       Edit transcript
                     </Link>
@@ -448,7 +449,7 @@ async function Ofrenda({
             No memories match that search.{" "}
             <Link
               href={`/person/${person.id}`}
-              className={`font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
+              className={`inline-flex min-h-11 items-center font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
             >
               Clear filters
             </Link>
@@ -468,7 +469,7 @@ async function Ofrenda({
         </p>
         <Link
           href="/"
-          className={`font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
+          className={`inline-flex min-h-11 items-center font-semibold text-marigold underline underline-offset-4 ${focusRing}`}
         >
           Back to all people
         </Link>

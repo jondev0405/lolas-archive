@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingCandle } from "@/components/loading-candle";
+import { readableError } from "@/lib/errors";
 
 type Person = { id: string; name: string };
 
@@ -72,10 +73,19 @@ export default function NewMemoryForm({ people }: { people: Person[] }) {
     try {
       const res = await fetch("/api/transcribe", { method: "POST", body: fd });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" && data.error
+            ? data.error
+            : "The transcription service did not respond. Please try again.",
+        );
+      }
+      if (typeof data.memoryId !== "string" || !data.memoryId) {
+        throw new Error("The transcription finished but no memory was returned. Please try again.");
+      }
       router.push(`/memory/${data.memoryId}/edit`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(readableError(err, "Something went wrong while transcribing. Please try again."));
       setBusy(false);
     }
   }

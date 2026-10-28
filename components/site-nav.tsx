@@ -21,7 +21,10 @@ export function SiteNav() {
         aria-label="Main"
         className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-6 py-4"
       >
-        <Link href="/" className="flex items-center gap-2 text-cream">
+        <Link
+          href="/"
+          className="flex min-h-11 items-center gap-2 rounded-sm text-cream outline-none focus-visible:ring-2 focus-visible:ring-marigold focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
           <FlameIcon />
           <span className="font-display text-2xl font-semibold">Lola&apos;s Archive</span>
         </Link>

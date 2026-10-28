@@ -39,6 +39,7 @@ async function Review({ params }: { params: Promise<{ id: string }> }) {
             <div className="rounded-2xl border border-line bg-surface p-4">
               <audio
                 controls
+                aria-label={`Original recording for ${memory.person.name}`}
                 src={`/api/audio/${memory.id}`}
                 className="w-full"
                 style={{ accentColor: "#F4A62A" }}
@@ -53,7 +54,7 @@ async function Review({ params }: { params: Promise<{ id: string }> }) {
             <h2 id="transcript-heading" className="font-display text-2xl">
               Transcript
             </h2>
-            <p className="mt-4 whitespace-pre-wrap rounded-2xl border border-line-strong bg-ink p-5 font-display text-[21px] leading-[1.6] text-cream">
+            <p className="mt-4 whitespace-pre-wrap break-words rounded-2xl border border-line-strong bg-ink p-5 font-display text-[21px] leading-[1.6] text-cream">
               {memory.transcript}
             </p>
           </section>

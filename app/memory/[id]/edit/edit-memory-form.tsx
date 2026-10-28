@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingCandle } from "@/components/loading-candle";
+import { readableError } from "@/lib/errors";
 
 type Stage = "idle" | "gathering" | "lighting";
 
@@ -43,11 +44,17 @@ export default function EditMemoryForm({
         body: JSON.stringify({ memoryId, transcript }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" && data.error
+            ? data.error
+            : "The gathering step did not respond. Please try again.",
+        );
+      }
       setStage("lighting");
       router.push(`/memory/${memoryId}/review`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(readableError(err, "Something went wrong while gathering memories. Please try again."));
       setStage("idle");
     }
   }
@@ -71,6 +78,7 @@ export default function EditMemoryForm({
         <div className="rounded-2xl border border-line bg-surface p-4">
           <audio
             controls
+            aria-label={`Original recording for ${personName}`}
             src={`/api/audio/${memoryId}`}
             className="w-full"
             style={{ accentColor: "#F4A62A" }}
