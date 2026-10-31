@@ -31,7 +31,6 @@ def health():
     return {"ok": True, "model": MODEL_SIZE}
 
 
-# Plain `def` so FastAPI runs this CPU-heavy work in a thread pool.
 @app.post("/transcribe")
 def transcribe(file: UploadFile = File(...), language: str | None = None):
     suffix = os.path.splitext(file.filename or "")[1] or ".webm"
