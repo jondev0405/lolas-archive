@@ -50,3 +50,11 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# local agent skills and design assets
+/.agent/skills/
+/.claude/skills/
+/.windsurf/skills/
+/public/ui/
+/AGENT.md
+/DRAFT.md
