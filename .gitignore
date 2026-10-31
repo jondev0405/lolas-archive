@@ -55,6 +55,7 @@ next-env.d.ts
 /.agent/skills/
 /.claude/skills/
 /.windsurf/skills/
+/.agents/skills/
 /public/ui/
 /AGENT.md
 /DRAFT.md
