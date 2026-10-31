@@ -8,7 +8,15 @@ const adapter = new PrismaBetterSqlite3({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  await prisma.person.deleteMany();
+  const existing = await prisma.person.findFirst({
+    where: { name: "Lolo Ben" },
+    select: { id: true },
+  });
+  if (existing) {
+    console.log("Sample person Lolo Ben already exists; leaving the archive untouched.");
+    return;
+  }
+
   await prisma.person.create({
     data: {
       name: "Lolo Ben",

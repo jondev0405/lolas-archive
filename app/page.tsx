@@ -36,7 +36,7 @@ const STEPS = [
 const PRIVACY_POINTS = [
   "Transcribed locally with faster-whisper",
   "Organized by a local Ollama model",
-  "Quotes kept only if they appear word for word",
+  "Quotes checked against the transcript",
 ] as const;
 
 const TIER_CIRCLES = {
@@ -287,8 +287,8 @@ async function HomeContent({ searchParams }: { searchParams: Promise<HomeSearchP
 
       <footer className="mt-16 text-sm text-muted">
         <p>
-          Lola&apos;s Archive organizes what your family said. It never writes in anyone&apos;s
-          voice.
+          Lola&apos;s Archive organizes what your family said. It never invents an exact
+          quote.
         </p>
       </footer>
     </>

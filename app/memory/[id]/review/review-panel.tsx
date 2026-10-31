@@ -135,10 +135,14 @@ export default function ReviewPanel({
       <h2 id="gathered-heading" className="font-display text-[32px] leading-tight">
         What was gathered
       </h2>
-      <p className="mt-2 text-muted">Read it over. You can fix or remove anything.</p>
+      <p className="mt-2 text-muted">
+        Read it over. Remove anything that is not right. To change the transcript, go back.
+      </p>
 
       <div className="mt-6">
-        <h3 className="font-semibold">Summary</h3>
+        <h3 className="font-semibold">
+          Summary <span className="font-normal text-muted">(read-only)</span>
+        </h3>
         <p className="mt-2 break-words rounded-2xl border border-line bg-ink p-4 leading-relaxed">
           {summary?.trim() || "No summary yet."}
         </p>
@@ -211,7 +215,7 @@ export default function ReviewPanel({
                 </div>
                 <figcaption className="mt-3 flex items-center gap-2 text-sm text-muted">
                   <Check aria-hidden="true" className="h-4 w-4 shrink-0 text-marigold" />
-                  Found word for word in the transcript
+                   Matches the transcript after normalizing quotes and spacing
                 </figcaption>
               </figure>
             ))}
@@ -220,7 +224,8 @@ export default function ReviewPanel({
           <p className="mt-3 text-sm text-muted">None found</p>
         )}
         <p className="mt-4 text-sm text-muted">
-          A quote is only kept if it appears in the transcript exactly as written.
+          A quote is only kept if it appears in the transcript after normalizing curly
+          quotes and spacing. Check that the loved one, not the narrator, said it.
         </p>
       </div>
 

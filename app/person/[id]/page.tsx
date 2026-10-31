@@ -394,7 +394,7 @@ async function Ofrenda({
                         </blockquote>
                         <figcaption className="mt-4 flex items-center gap-2 text-sm text-muted">
                           <Check aria-hidden="true" className="h-4 w-4 shrink-0 text-marigold" />
-                          Their exact words, from the recording
+                          Appears in the transcript of this recording
                         </figcaption>
                       </figure>
                     ))}
@@ -464,7 +464,7 @@ async function Ofrenda({
 
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6 text-sm text-muted">
         <p>
-          Lola&apos;s Archive organized what their family said. It did not write anything in
+          Lola&apos;s Archive organized what their family said. It did not compose quotes in
           anyone&apos;s voice. Stored on this device only.
         </p>
         <Link

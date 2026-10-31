@@ -12,44 +12,42 @@ said, and never writes in their voice.
 
 ## Demo
 
-> Replace the placeholder links and media in `docs/` before submission.
+> Demo media is not committed in this checkout. Add the video link and the screenshots
+> under `docs/` before submitting, then restore the embeds here.
 
-- Demo video: [TODO: add demo video link](TODO)
-- Animated walkthrough: ![Animated walkthrough](docs/demo.gif)
+- Demo video: not added yet.
+- Animated walkthrough and screenshots: to be added in `docs/demo.gif` and
+  `docs/screens/`.
 
-### Screenshots
-
-![Home page](docs/screens/home.png)
-*Home: local service status, a sample ofrenda, and the people remembered on this device.*
-
-![New memory](docs/screens/new-memory.png)
-*New memory: name a person, add an optional photo, and drop in a voice note.*
-
-![Review screen](docs/screens/review.png)
-*Review: read the transcript, then keep or remove each gathered offering and quote.*
-
-![Ofrenda page](docs/screens/ofrenda.png)
-*Ofrenda: portrait or initials, favorite foods and songs, exact words, and the original recording.*
+Planned screenshots: Home (service status and remembered people), New memory (name,
+optional photo and voice note), Review (transcript plus gathered items), and Ofrenda
+(portrait or initials, offerings, quotes and audio).
 
 ## The exact-quote guarantee
 
-The app is designed so it cannot invent a quote and present it as someone's words.
+The app is designed so the model cannot add a quote that does not appear in the
+transcript.
 
 1. **The model returns a constrained shape.** Ollama is asked for JSON that matches a
    fixed schema containing only a summary, tags, foods, songs, places and quotes. The
    request uses temperature `0` and the schema is passed as Ollama's `format`.
 2. **The server checks the result against the transcript.** Foods, songs and places are
-   kept only if they appear in the transcript, compared case-insensitively after
-   normalizing curly quotes and whitespace. Quotes have surrounding quote marks removed
-   and are kept only when the exact normalized text appears as a literal substring of
-   the transcript. The check runs in `lib/extract.ts` (`guard()`).
+   kept only when they match a whole word or phrase in the transcript, compared
+   case-insensitively after normalizing curly quotes and whitespace. Quotes have
+   surrounding quote marks removed and are kept only when the normalized text appears as
+   a whole phrase in the transcript. Empty values, fragments inside longer words and
+   duplicates are dropped. The check runs in `lib/extract.ts` (`guard()`).
 3. **You review everything before treating the page as finished.** The transcript is
-   editable. The review screen shows the gathered summary, tags, offerings and quotes, and
-   lets you remove any item; each removal is saved. The ofrenda is generated from that
-   reviewed data.
+   editable. The review screen shows the gathered summary, tags, offerings and quotes. You
+   can remove tags, foods, songs, places and quotes, and each removal is saved. The
+   summary is read-only. The ofrenda reads the same saved data, so remove anything you do
+   not want before sharing it.
 
-The summary is an organizing aid, not a quote. The guard protects quote attribution; it
-does not claim that the summary is perfect. You should read it before sharing.
+The guard checks the transcript, not the audio and not who spoke the sentence. A sentence
+the narrator said can still be selected as a quote, and a transcript can contain words
+the recording did not. Correct the transcript before extraction and remove any quote that
+is not the loved one's own words. The summary is an organizing aid, not a quote; it is not
+checked word for word and you should read it before sharing.
 
 ## Features
 
@@ -136,9 +134,10 @@ npx prisma migrate dev
 npm run db:seed
 ```
 
-The seed adds one sample person, Lolo Ben, so the Home page has something to show.
-`npm run db:reset` wipes and recreates only the local SQLite development database, then
-reseeds it. It does not touch uploaded files or the Python service.
+The seed adds one sample person, Lolo Ben, if no person called Lolo Ben already exists,
+so the Home page has something to show without deleting anyone. `npm run db:reset` wipes
+and recreates only the local SQLite development database, then reseeds it. It does not
+touch uploaded files or the Python service.
 
 ### 5. Install the local transcription service
 
@@ -181,8 +180,9 @@ python/.venv/Scripts/python -m uvicorn main:app --app-dir python --port 8000
 4. Drop in `samples/sample-memory.wav`. It is a short synthetic test recording, not a real
    family memory, so the flow can be tried without using private audio.
 5. Read and correct the transcript, then choose "Gather memories and light the ofrenda".
-6. On the review screen, remove anything the model gathered incorrectly, then add the
-   memory to the ofrenda.
+6. On the review screen, remove anything the model gathered incorrectly, then open the
+   person's ofrenda. The gathered data is already saved, so the review is about removing
+   what should not be shown.
 7. Try searching, filtering by tag, playing the recording, printing and saving the
    ofrenda as an image.
 
@@ -281,9 +281,12 @@ transcription model are the obvious next candidates.
 
 ## Prize category
 
-<!-- TODO: fill in the challenge category name(s) and explain why this project fits. -->
+Hacktoberfest Open-Source AI Challenge Week 4: Ghost in the Machine.
 
-> TODO: category name(s) and a short justification.
+The project treats the voice that survives in a recording as the thing worth keeping: the
+foods, songs, places and turns of phrase a person left behind. It organizes those details
+with local models, holds every quote to the transcript, and hands the decision about what
+to keep back to the family.
 
 ## Project structure
 
@@ -296,7 +299,7 @@ python/               FastAPI + faster-whisper service
 samples/              Synthetic sample recording for testing
 scripts/              Local extraction test script
 uploads/              Uploaded audio and photos (gitignored, created at runtime)
-docs/                 Demo GIF and screenshot placeholders
+docs/                 Demo media (add the GIF and screenshots before submitting)
 dev.db                Local SQLite database (gitignored)
 ```
 

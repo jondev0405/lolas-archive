@@ -20,6 +20,9 @@ const jsonSchema = {
   required: ["summary", "tags", "foods", "songs", "places", "quotes"],
 };
 
+const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "gemma3:4b-it-qat";
+
 const SYSTEM = `You organize a family member's spoken memory of a loved one.
 Use ONLY what is stated in the transcript. Never invent or guess anything.
 - summary: one or two plain sentences, third person, facts from the transcript only.
@@ -29,11 +32,11 @@ Use ONLY what is stated in the transcript. Never invent or guess anything.
 Return JSON only.`;
 
 async function callOllama(transcript: string, personLabel?: string): Promise<string> {
-  const res = await fetch(`${process.env.OLLAMA_URL}/api/chat`, {
+  const res = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: process.env.OLLAMA_MODEL,
+      model: OLLAMA_MODEL,
       stream: false,
       format: jsonSchema, // constrains output to the schema
       keep_alive: "10m",
@@ -60,18 +63,37 @@ const norm = (s: string) =>
   s.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"')
    .replace(/\s+/g, " ").trim();
 
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Match a whole word or phrase, not a substring of a longer word.
+function containsPhrase(haystack: string, needle: string): boolean {
+  if (!needle) return false;
+  const pattern = new RegExp(
+    `(?<![\\p{L}\\p{N}])${escapeRegExp(needle)}(?![\\p{L}\\p{N}])`,
+    "u",
+  );
+  return pattern.test(haystack);
+}
+
 function guard(x: Extraction, transcript: string): Extraction {
   const t = norm(transcript);
   const tl = t.toLowerCase();
   const stripQuotes = (q: string) => norm(q).replace(/^["']+|["']+$/g, "").trim();
-  const appears = (s: string) => tl.includes(norm(s).toLowerCase());
+  const appears = (s: string) => {
+    const value = norm(s);
+    return value.length > 0 && containsPhrase(tl, value.toLowerCase());
+  };
+  const keepUnique = (items: string[]) =>
+    [...new Set(items.map((s) => norm(s)).filter(appears))];
   return {
     summary: x.summary.trim(),
     tags: [...new Set(x.tags.map((s) => s.toLowerCase().trim()).filter(Boolean))].slice(0, 6),
-    foods: x.foods.filter(appears),
-    songs: x.songs.filter(appears),
-    places: x.places.filter(appears),
-    quotes: [...new Set(x.quotes.map(stripQuotes))].filter((q) => q.length > 3 && t.includes(q)),
+    foods: keepUnique(x.foods),
+    songs: keepUnique(x.songs),
+    places: keepUnique(x.places),
+    quotes: [...new Set(x.quotes.map(stripQuotes))].filter(
+      (q) => q.length > 3 && containsPhrase(t, q),
+    ),
   };
 }
 

@@ -7,6 +7,8 @@ import { deletePhoto, savePhoto } from "../../../lib/photos";
 
 export const maxDuration = 300;
 
+const TRANSCRIBE_URL = process.env.TRANSCRIBE_URL ?? "http://localhost:8000";
+
 export async function POST(req: Request) {
   const form = await req.formData();
   const file = form.get("file");
@@ -65,7 +67,7 @@ export async function POST(req: Request) {
   const fd = new FormData();
   fd.append("file", new Blob([buf]), audioName);
   const lang = process.env.WHISPER_LANGUAGE;
-  const url = `${process.env.TRANSCRIBE_URL}/transcribe${lang ? `?language=${lang}` : ""}`;
+  const url = `${TRANSCRIBE_URL}/transcribe${lang ? `?language=${lang}` : ""}`;
 
   let res: Response;
   try {
